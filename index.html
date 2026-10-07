@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChurnVision AI — Customer Churn Prediction & Retention Intelligence</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- CSS Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <div class="brand-container">
+      <div class="brand-icon">
+        <i class="fa-solid fa-chart-line-down"></i>
+      </div>
+      <div>
+        <div class="brand-title">ChurnVision <span style="color: var(--primary-cyan)">AI</span></div>
+      </div>
+      <span class="brand-badge">Enterprise ML 2.0</span>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-tab="tab-eda">
+        <i class="fa-solid fa-chart-pie"></i> Data EDA & Insights
+      </button>
+      <button class="tab-btn" data-tab="tab-studio">
+        <i class="fa-solid fa-brain"></i> Model Studio
+      </button>
+      <button class="tab-btn" data-tab="tab-predict">
+        <i class="fa-solid fa-user-gear"></i> Customer Predictor
+      </button>
+      <button class="tab-btn" data-tab="tab-batch">
+        <i class="fa-solid fa-file-csv"></i> Batch Scoring
+      </button>
+      <button class="tab-btn" data-tab="tab-code">
+        <i class="fa-solid fa-code"></i> Notebook & Code
+      </button>
+    </div>
+
+    <div class="server-status-pill" id="status-pill">
+      <div class="status-dot"></div>
+      <span id="status-text">Server Online (Python 3.11)</span>
+    </div>
+  </nav>
+
+  <!-- Main Workspace -->
+  <div class="main-container">
+
+    <!-- KPI Summary Banner -->
+    <div class="stats-banner">
+      <div class="stat-card">
+        <div class="stat-icon-wrapper stat-icon-cyan">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Analyzed</div>
+          <div class="stat-value" id="kpi-total">5,000</div>
+          <div class="stat-subtext">Active & Churned Records</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon-wrapper stat-icon-rose">
+          <i class="fa-solid fa-user-xmark"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Overall Churn Rate</div>
+          <div class="stat-value" id="kpi-rate" style="color: var(--accent-rose)">28.9%</div>
+          <div class="stat-subtext">1,443 At-Risk Customers</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon-wrapper stat-icon-purple">
+          <i class="fa-solid fa-sack-dollar"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Revenue at Risk</div>
+          <div class="stat-value" id="kpi-revenue" style="color: var(--primary-violet)">$108.2k</div>
+          <div class="stat-subtext">Monthly Recurring Revenue</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon-wrapper stat-icon-emerald">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Best Classifier</div>
+          <div class="stat-value" id="kpi-best-model" style="color: var(--accent-emerald)">Logistic Reg</div>
+          <div class="stat-subtext">F1-Score: 0.642 | AUC: 0.845</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 1: EDA & INSIGHTS -->
+    <div id="tab-eda" class="tab-content active">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-chart-donut"></i> Churn Distribution Breakdown
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-churn-donut"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-file-contract"></i> Churn Rate by Contract Type
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-contract-bar"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-headset"></i> Tech Support Impact on Churn
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-support-bar"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-chart-line"></i> Tenure vs Monthly Charges (Scatter)
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-tenure-scatter"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: MODEL STUDIO -->
+    <div id="tab-studio" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-ranking-star"></i> Classification Models Benchmark Comparison
+          </div>
+          <button class="btn btn-primary" id="btn-retrain">
+            <i class="fa-solid fa-rotate-right"></i> Run Retrain & Evaluate
+          </button>
+        </div>
+        <table class="data-table" id="models-table">
+          <thead>
+            <tr>
+              <th>Model Name</th>
+              <th>Accuracy</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>F1-Score</th>
+              <th>ROC-AUC</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="models-tbody">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-chart-column"></i> F1-Score & ROC-AUC Comparison
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-model-compare"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-scale-balanced"></i> Feature Importance Rankings
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="chart-feature-imp"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-table-cells"></i> Interactive Confusion Matrix Inspector
+          </div>
+          <select class="form-select" id="cm-model-select" style="max-width: 260px;">
+            <option value="Logistic Regression">Logistic Regression</option>
+            <option value="Random Forest">Random Forest</option>
+            <option value="Gradient Boosting">Gradient Boosting</option>
+            <option value="Decision Tree">Decision Tree</option>
+            <option value="K-Nearest Neighbors">K-Nearest Neighbors</option>
+          </select>
+        </div>
+        <div class="grid-2">
+          <div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+              Confusion Matrix breaks down True Positives (correct churn predictions), False Positives (false alarms), 
+              True Negatives (retained customers), and False Negatives (missed churners).
+            </p>
+            <div class="cm-grid">
+              <div class="cm-box" style="border-color: rgba(16,185,129,0.3)">
+                <div class="cm-num" id="cm-tn" style="color: var(--accent-emerald)">720</div>
+                <div class="cm-lbl">True Negative (Retained)</div>
+              </div>
+              <div class="cm-box" style="border-color: rgba(245,158,11,0.3)">
+                <div class="cm-num" id="cm-fp" style="color: var(--accent-amber)">62</div>
+                <div class="cm-lbl">False Positive (False Alarm)</div>
+              </div>
+              <div class="cm-box" style="border-color: rgba(239,68,68,0.3)">
+                <div class="cm-num" id="cm-fn" style="color: var(--accent-rose)">112</div>
+                <div class="cm-lbl">False Negative (Missed Churn)</div>
+              </div>
+              <div class="cm-box" style="border-color: rgba(0,242,254,0.3)">
+                <div class="cm-num" id="cm-tp" style="color: var(--primary-cyan)">106</div>
+                <div class="cm-lbl">True Positive (Caught Churn)</div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-container" style="height: 240px;">
+            <canvas id="chart-cm-donut"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: CUSTOMER PREDICTOR & WHAT-IF -->
+    <div id="tab-predict" class="tab-content">
+      <div class="grid-2-1">
+        <!-- Form Controls -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-sliders"></i> Customer Profile Attributes
+            </div>
+            <button class="btn btn-outline" id="btn-preset-high" style="padding: 0.4rem 0.8rem; font-size: 0.78rem;">
+              <i class="fa-solid fa-bolt"></i> Load High-Risk Preset
+            </button>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Tenure (Months)</label>
+              <input type="number" class="form-control" id="inp-tenure" value="4" min="1" max="72">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Contract Type</label>
+              <select class="form-select" id="inp-contract">
+                <option value="Month-to-month" selected>Month-to-month</option>
+                <option value="One year">One year</option>
+                <option value="Two year">Two year</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Internet Service</label>
+              <select class="form-select" id="inp-internet">
+                <option value="Fiber optic" selected>Fiber optic</option>
+                <option value="DSL">DSL</option>
+                <option value="No">No Internet</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Monthly Charges ($)</label>
+              <input type="number" class="form-control" id="inp-monthly" value="89.50" step="0.5">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Tech Support Service</label>
+              <select class="form-select" id="inp-tech">
+                <option value="No" selected>No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Online Security</label>
+              <select class="form-select" id="inp-security">
+                <option value="No" selected>No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Payment Method</label>
+              <select class="form-select" id="inp-payment">
+                <option value="Electronic check" selected>Electronic check</option>
+                <option value="Credit card (automatic)">Credit card (automatic)</option>
+                <option value="Bank transfer (automatic)">Bank transfer (automatic)</option>
+                <option value="Mailed check">Mailed check</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Support Calls (Past 6 mo)</label>
+              <input type="number" class="form-control" id="inp-calls" value="4" min="0" max="10">
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="btn-predict-single" style="width: 100%; margin-top: 0.5rem;">
+            <i class="fa-solid fa-calculator"></i> Predict Churn Probability
+          </button>
+        </div>
+
+        <!-- Risk Output Meter & SHAP -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-gauge-high"></i> AI Risk Score Meter
+              </div>
+            </div>
+            <div class="gauge-wrapper">
+              <div class="gauge-score danger" id="pred-score">99.0%</div>
+              <div class="gauge-status-badge badge-danger" id="pred-badge">Critical Churn Risk</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Top Risk Factors Breakdown
+              </div>
+            </div>
+            <div class="shap-list" id="pred-shap-container">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- What-If Simulator -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-flask"></i> Interactive What-If Retention Simulator
+          </div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+              Simulate retention offers in real-time and observe how changing contract terms or adding support packages reduces churn probability.
+            </p>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Contract Upgrade</span>
+                <span id="lbl-sim-contract" style="color: var(--primary-cyan)">Month-to-month</span>
+              </div>
+              <select class="form-select" id="sim-contract">
+                <option value="Month-to-month">Month-to-month (Current)</option>
+                <option value="One year">Upgrade to 1-Year Contract (-25% Risk)</option>
+                <option value="Two year">Upgrade to 2-Year Contract (-45% Risk)</option>
+              </select>
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Add Tech Support Package</span>
+                <span id="lbl-sim-tech" style="color: var(--accent-emerald)">No</span>
+              </div>
+              <select class="form-select" id="sim-tech">
+                <option value="No">No Tech Support (Current)</option>
+                <option value="Yes">Add Tech Support (-18% Risk)</option>
+              </select>
+            </div>
+
+            <div class="slider-group">
+              <div class="slider-header">
+                <span>Monthly Bill Discount ($/mo)</span>
+                <span id="lbl-sim-discount" style="color: var(--accent-amber)">$0 / mo</span>
+              </div>
+              <input type="range" class="range-slider" id="sim-discount" min="0" max="35" step="5" value="0">
+            </div>
+          </div>
+
+          <div style="background: rgba(15,23,42,0.6); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Simulated New Churn Risk</div>
+              <div style="font-size: 3rem; font-weight: 800; color: var(--accent-emerald); margin: 0.5rem 0;" id="sim-new-score">34.2%</div>
+              <div style="font-size: 0.9rem; color: var(--text-secondary);">
+                Risk Reduction: <strong id="sim-delta" style="color: var(--primary-cyan);">-64.8%</strong>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+              <div class="card-title" style="font-size: 0.95rem; margin-bottom: 0.75rem;">
+                <i class="fa-solid fa-lightbulb"></i> Recommended AI Playbook
+              </div>
+              <div id="sim-playbook-list">
+                <!-- Recommendations -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: BATCH scoring -->
+    <div id="tab-batch" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fa-solid fa-database"></i> Batch Customer Churn Analyzer
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-outline" id="btn-gen-batch">
+              <i class="fa-solid fa-arrows-rotate"></i> Generate 500 Test Customers
+            </button>
+            <button class="btn btn-emerald" id="btn-export-csv">
+              <i class="fa-solid fa-download"></i> Export CSV Report
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-outline active" id="btn-filter-all" style="padding: 0.4rem 0.8rem; font-size: 0.78rem;">All Records</button>
+            <button class="btn btn-outline" id="btn-filter-high" style="padding: 0.4rem 0.8rem; font-size: 0.78rem; color: var(--accent-rose);">High/Critical Risk Only</button>
+          </div>
+          <span style="font-size: 0.85rem; color: var(--text-secondary);" id="batch-count-lbl">Showing 500 records</span>
+        </div>
+
+        <div style="max-height: 500px; overflow-y: auto;">
+          <table class="data-table" id="batch-table">
+            <thead>
+              <tr>
+                <th>Customer ID</th>
+                <th>Tenure</th>
+                <th>Contract</th>
+                <th>Internet</th>
+                <th>Monthly Charge</th>
+                <th>Churn Risk Score</th>
+                <th>Risk Category</th>
+                <th>Action Plan</th>
+              </tr>
+            </thead>
+            <tbody id="batch-tbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: NOTEBOOK & CODE -->
+    <div id="tab-code" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fa-brands fa-python"></i> Python Machine Learning Pipeline Code
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <a href="Customer_Churn_Prediction.ipynb" download class="btn btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+              <i class="fa-solid fa-book"></i> Download .ipynb Notebook
+            </a>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem;">
+          <button class="tab-btn active" id="btn-code-train" style="font-size: 0.8rem;">train_model.py</button>
+          <button class="tab-btn" id="btn-code-gen" style="font-size: 0.8rem;">generate_dataset.py</button>
+          <button class="tab-btn" id="btn-code-pred" style="font-size: 0.8rem;">predict_churn.py</button>
+        </div>
+
+        <div class="code-block">
+          <button class="copy-code-btn" id="btn-copy-code"><i class="fa-regular fa-copy"></i> Copy</button>
+          <pre><code id="code-content"># Loading Python pipeline...</code></pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JS App & Engine -->
+  <script src="ml_engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

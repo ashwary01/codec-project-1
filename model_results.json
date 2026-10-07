@@ -1,0 +1,176 @@
+{
+  "dataset_size": 5000,
+  "test_size": 1000,
+  "churn_rate": 0.2886,
+  "models": {
+    "Random Forest": {
+      "accuracy": 0.792,
+      "precision": 0.6995,
+      "recall": 0.4913,
+      "f1_score": 0.5772,
+      "roc_auc": 0.8328,
+      "confusion_matrix": [
+        [
+          650,
+          61
+        ],
+        [
+          147,
+          142
+        ]
+      ]
+    },
+    "Logistic Regression": {
+      "accuracy": 0.806,
+      "precision": 0.6877,
+      "recall": 0.6021,
+      "f1_score": 0.6421,
+      "roc_auc": 0.8445,
+      "confusion_matrix": [
+        [
+          632,
+          79
+        ],
+        [
+          115,
+          174
+        ]
+      ]
+    },
+    "Gradient Boosting": {
+      "accuracy": 0.787,
+      "precision": 0.6418,
+      "recall": 0.5952,
+      "f1_score": 0.6176,
+      "roc_auc": 0.8268,
+      "confusion_matrix": [
+        [
+          615,
+          96
+        ],
+        [
+          117,
+          172
+        ]
+      ]
+    },
+    "Decision Tree": {
+      "accuracy": 0.789,
+      "precision": 0.6757,
+      "recall": 0.519,
+      "f1_score": 0.5871,
+      "roc_auc": 0.8167,
+      "confusion_matrix": [
+        [
+          639,
+          72
+        ],
+        [
+          139,
+          150
+        ]
+      ]
+    },
+    "K-Nearest Neighbors": {
+      "accuracy": 0.756,
+      "precision": 0.5991,
+      "recall": 0.4706,
+      "f1_score": 0.5271,
+      "roc_auc": 0.7773,
+      "confusion_matrix": [
+        [
+          620,
+          91
+        ],
+        [
+          153,
+          136
+        ]
+      ]
+    }
+  },
+  "best_model": "Logistic Regression",
+  "feature_importances": [
+    {
+      "feature": "tenure",
+      "importance": 0.1914
+    },
+    {
+      "feature": "TotalCharges",
+      "importance": 0.1605
+    },
+    {
+      "feature": "MonthlyCharges",
+      "importance": 0.1048
+    },
+    {
+      "feature": "Contract_Two year",
+      "importance": 0.1005
+    },
+    {
+      "feature": "Contract_One year",
+      "importance": 0.0971
+    },
+    {
+      "feature": "InternetService_Fiber optic",
+      "importance": 0.0522
+    },
+    {
+      "feature": "CustomerServiceCalls",
+      "importance": 0.0434
+    },
+    {
+      "feature": "TechSupport_Yes",
+      "importance": 0.0196
+    },
+    {
+      "feature": "Partner_Yes",
+      "importance": 0.0191
+    },
+    {
+      "feature": "PaymentMethod_Electronic check",
+      "importance": 0.0181
+    },
+    {
+      "feature": "PaperlessBilling_Yes",
+      "importance": 0.0161
+    },
+    {
+      "feature": "SeniorCitizen",
+      "importance": 0.0159
+    }
+  ],
+  "feature_names": [
+    "SeniorCitizen",
+    "tenure",
+    "MonthlyCharges",
+    "TotalCharges",
+    "CustomerServiceCalls",
+    "gender_Male",
+    "Partner_Yes",
+    "Dependents_Yes",
+    "PhoneService_Yes",
+    "MultipleLines_No phone service",
+    "MultipleLines_Yes",
+    "InternetService_Fiber optic",
+    "InternetService_No",
+    "OnlineSecurity_No internet service",
+    "OnlineSecurity_Yes",
+    "OnlineBackup_No internet service",
+    "OnlineBackup_Yes",
+    "DeviceProtection_No internet service",
+    "DeviceProtection_Yes",
+    "TechSupport_No internet service",
+    "TechSupport_Yes",
+    "StreamingTV_No internet service",
+    "StreamingTV_Yes",
+    "StreamingMovies_No internet service",
+    "StreamingMovies_Yes",
+    "Contract_One year",
+    "Contract_Two year",
+    "PaperlessBilling_Yes",
+    "PaymentMethod_Credit card (automatic)",
+    "PaymentMethod_Electronic check",
+    "PaymentMethod_Mailed check"
+  ]
+}
